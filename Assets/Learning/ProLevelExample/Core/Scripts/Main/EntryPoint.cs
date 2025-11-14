@@ -32,7 +32,7 @@ namespace Project {
         /// <summary>
         /// The is the first method called when the game starts. It will load the Initializer prefab which will initialize the project
         /// </summary>
-        [RuntimeInitializeOnLoadMethod]
+        // [RuntimeInitializeOnLoadMethod]
         private static void Initialize() {
 #if UNITY_EDITOR
             if(BootMode.BootType == BootType.UnityDefault) {

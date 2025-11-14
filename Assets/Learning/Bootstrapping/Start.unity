@@ -523,7 +523,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1460330167
 Transform:
   m_ObjectHideFlags: 0
@@ -551,7 +551,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d2f0dc889e9b2e4782cdbc3c6c66199, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fg.2025::SimpleStartExampleTwo
-  monoServiceTwoPrefab: {fileID: 3049298481355614932, guid: eb4df46e2a558514ca8cee64e1f2e122, type: 3}
+  monoServiceTwoReference:
+    m_AssetGUID: eb4df46e2a558514ca8cee64e1f2e122
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
 --- !u!114 &283927883210781153
 MonoBehaviour:
   m_ObjectHideFlags: 0
