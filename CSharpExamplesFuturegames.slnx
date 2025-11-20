@@ -1,0 +1,9 @@
+﻿<Solution>
+  <Project Path="ToolBox.Serialization.OdinSerializer.csproj" />
+  <Project Path="fg.2025.pro.csproj" />
+  <Project Path="fg.2025.csproj" />
+  <Project Path="fg.2025.prototype.csproj" />
+  <Project Path="fg.2025.intermediate.csproj" />
+  <Project Path="com.intothedev.savesystem.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
+</Solution>

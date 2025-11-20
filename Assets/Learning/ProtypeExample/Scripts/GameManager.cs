@@ -1,20 +1,23 @@
-using UnityEngine;
-using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-namespace Learning.Prototype {
-    internal enum Weapons {
+namespace Learning.Prototype
+{
+    internal enum Weapons
+    {
         None,
         Pistol,
         Rifle,
-        RocketLauncher
+        RocketLauncher,
     }
 
     public record PlayerInfo(string Name, int Level, float Health, int HighScore);
 
-    public sealed class GameManager : MonoBehaviour {
+    public sealed class GameManager : MonoBehaviour
+    {
         public static bool godMode = false;
         public static int score = 0;
         public static int highScore = 0;
@@ -24,11 +27,12 @@ namespace Learning.Prototype {
 
         public static GameManager Instance;
 
-        internal static readonly Dictionary<Weapons, int> ammoDict = new() {
+        internal static readonly Dictionary<Weapons, int> ammoDict = new()
+        {
             { Weapons.None, 0 },
             { Weapons.Pistol, 99 },
             { Weapons.Rifle, 0 },
-            { Weapons.RocketLauncher, 0 }
+            { Weapons.RocketLauncher, 0 },
         };
 
         public CameraControl cameraControl;
@@ -60,13 +64,16 @@ namespace Learning.Prototype {
         private Queue<Bullet> activeBullets;
         private PlayerInfo playerRecord;
 
-        public static float PlayerHealth {
+        public static float PlayerHealth
+        {
             get => GameData.playerHealth;
             set => GameData.playerHealth = (int)value;
         }
 
-        private void Awake() {
-            if(Instance != null && Instance != this) {
+        private void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
                 Destroy(gameObject);
                 return;
             }
@@ -79,43 +86,54 @@ namespace Learning.Prototype {
             Debug.Log("Starting Player Info: " + playerRecord);
         }
 
-        private void Start() {
+        private void Start()
+        {
             RefreshUI();
         }
 
-        private void Update() {
-            if(Input.GetKeyDown(KeyCode.Escape)) {
-                if(GameData.gameIsPaused) {
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                if (GameData.gameIsPaused)
+                {
                     UnPause();
                 }
-                else {
+                else
+                {
                     Pause();
                 }
             }
 
-            if(Input.GetKeyDown(KeyCode.Alpha1)) {
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
                 godMode = !godMode;
                 Debug.Log("GodMode " + godMode);
             }
 
-            if(Input.GetKeyDown(KeyCode.Alpha2)) {
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
                 score += 1000;
                 RefreshUI();
             }
 
-            if(Input.GetKeyDown(KeyCode.Space)) {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
                 PlayerJump();
             }
 
-            if(Input.GetKeyDown(KeyCode.E)) {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
                 PlayerShoot();
             }
 
-            if(GameData.showFPS && Time.frameCount % 10 == 0) {
+            if (GameData.showFPS && Time.frameCount % 10 == 0)
+            {
                 //Debug.Log("FPS: " + (1f / Time.deltaTime).ToString("F1"));
             }
 
-            if(!GameData.gameIsOver && !GameData.gameIsPaused && Time.time > nextSpawn && enemies.Count < GameData.numMaxEnemies) {
+            if (!GameData.gameIsOver && !GameData.gameIsPaused && Time.time > nextSpawn && enemies.Count < GameData.numMaxEnemies)
+            {
                 nextSpawn = Time.time + Random.Range(1f, 3f);
                 int r = Random.Range(0, spawnPoints.Length);
                 Enemy enemy = Instantiate(enemyPrefab, spawnPoints[r].position, Quaternion.identity);
@@ -125,20 +143,25 @@ namespace Learning.Prototype {
                 StartMovingTowardsPlayer(enemy);
             }
 
-            if(!GameData.gameIsPaused && !GameData.playerIsDead) {
+            if (!GameData.gameIsPaused && !GameData.playerIsDead)
+            {
                 float mx = Input.GetAxis("Mouse X") * mouseSensitivity;
                 float my = Input.GetAxis("Mouse Y") * mouseSensitivity;
             }
 
-            if(score >= 5000 && !GameData.gameIsOver) {
+            if (score >= 5000 && !GameData.gameIsOver)
+            {
                 Victory();
             }
         }
-        private void StartMovingTowardsPlayer(Enemy enemy) {
+
+        private void StartMovingTowardsPlayer(Enemy enemy)
+        {
             enemy.StartMovingTowards(player.transform);
         }
 
-        private void RefreshUI() {
+        private void RefreshUI()
+        {
             scoreText.text = score.ToString();
             livesText.text = lives.ToString();
             weaponText.text = currentWeapon.ToString();
@@ -146,7 +169,8 @@ namespace Learning.Prototype {
             highScoreText.text = highScore.ToString();
         }
 
-        public void Pause() {
+        public void Pause()
+        {
             GameData.gameIsPaused = true;
             Time.timeScale = 0f;
             pausePanel?.SetActive(true);
@@ -154,7 +178,8 @@ namespace Learning.Prototype {
             Cursor.lockState = CursorLockMode.None;
         }
 
-        public void UnPause() {
+        public void UnPause()
+        {
             GameData.gameIsPaused = false;
             Time.timeScale = 1f;
             pausePanel.SetActive(false);
@@ -162,14 +187,17 @@ namespace Learning.Prototype {
             Cursor.lockState = CursorLockMode.Locked;
         }
 
-        public void PlayerJump() {
+        public void PlayerJump()
+        {
             // if(jumpSound != null) {
             //     musicSource.PlayOneShot(jumpSound); // re-using MusicSource because lazy
             // }
         }
 
-        public void PlayerShoot() {
-            if(ammoDict[currentWeapon] <= 0) {
+        public void PlayerShoot()
+        {
+            if (ammoDict[currentWeapon] <= 0)
+            {
                 return;
             }
             ammoDict[currentWeapon]--;
@@ -183,96 +211,116 @@ namespace Learning.Prototype {
             activeBullets.Enqueue(bullet);
             MoveBullet();
         }
-        private void MoveBullet() {
+
+        private void MoveBullet()
+        {
             throw new System.NotImplementedException();
         }
 
-        public void DamagePlayer(int dmg) {
-            if(godMode) {
+        public void DamagePlayer(int dmg)
+        {
+            if (godMode)
+            {
                 return;
             }
             player.healthBar.fillAmount -= GetDamagePercent(dmg);
-            if(GameData.playerHealth <= 0) {
+            if (GameData.playerHealth <= 0)
+            {
                 KillPlayer();
             }
         }
 
-        public void DamagePlayer(float dmg) {
-            if(godMode) {
+        public void DamagePlayer(float dmg)
+        {
+            if (godMode)
+            {
                 return;
             }
             player.healthBar.fillAmount -= GetDamagePercent(dmg);
-            if(GameData.playerHealth <= 0) {
+            if (GameData.playerHealth <= 0)
+            {
                 KillPlayer();
             }
         }
 
-        private float GetDamagePercent(int dmg) {
+        private float GetDamagePercent(int dmg)
+        {
             return dmg / 1f;
         }
 
-        private float GetDamagePercent(float dmg) {
+        private float GetDamagePercent(float dmg)
+        {
             return dmg / 1f;
         }
 
-        private void KillPlayer() {
+        private void KillPlayer()
+        {
             GameData.playerIsDead = true;
             lives--;
             // if(dieSound) {
             //     musicSource.PlayOneShot(dieSound);
             // }
-            if(lives <= 0) {
+            if (lives <= 0)
+            {
                 GameOver();
             }
-            else {
+            else
+            {
                 Invoke("RespawnPlayer", 2f);
             }
         }
 
-        private void RespawnPlayer() {
+        private void RespawnPlayer()
+        {
             player.healthBar.fillAmount = 1f;
             GameData.playerHealth = 100;
             GameData.playerIsDead = false;
             RefreshUI();
         }
 
-        public void AddScore(int s) {
+        public void AddScore(int s)
+        {
             score += s;
-            if(score > highScore) {
+            if (score > highScore)
+            {
                 highScore = score;
                 PlayerPrefs.SetInt("HighScore", highScore);
             }
             RefreshUI();
         }
 
-        private void GameOver() {
+        private void GameOver()
+        {
             GameData.gameIsOver = true;
             Time.timeScale = 0f;
             gameOverPanel.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
         }
 
-        private void Victory() {
+        private void Victory()
+        {
             GameData.gameIsOver = true;
             victoryPanel.SetActive(true);
             Time.timeScale = 0f;
             Cursor.lockState = CursorLockMode.None;
         }
 
-        public void LoadNextLevel() {
+        public void LoadNextLevel()
+        {
             level++;
             UnityEngine.SceneManagement.SceneManager.LoadScene("Level2" + level);
             // forgot to reset half the state…
         }
 
-        public void OnVolumeChanged(float v) {
+        public void OnVolumeChanged(float v)
+        {
             masterVolume = v;
             musicSource.volume = v;
         }
 
-        public void QuitGame() {
+        public void QuitGame()
+        {
             Application.Quit();
         }
     }
-
 }
